@@ -1,31 +1,89 @@
-## Devvit Phaser Starter
+Cozy Clicker
 
-A starter to build web applications on Reddit's developer platform
+A cozy idle clicker game on Reddit! Manage your sim's **hunger**, **energy**, **fun**, and **money** through actions (eat/sleep/play/work) and auto-upgrades (fridge/bed/TV/job). Stats decay over time—keep mood high or game over! Offline progress via server.
 
-- [Devvit](https://developers.reddit.com/): A way to build and deploy immersive games on Reddit
-- [Vite](https://vite.dev/): For compiling the webView
-- [Phaser](https://phaser.io/): 2D game engine
-- [Hono](https://hono.dev/): For backend logic
-- [TypeScript](https://www.typescriptlang.org/): For type safety
+![Gameplay mock](https://via.placeholder.com/800x600?text=Cozy+Clicker) *(Assets coming)*
 
-## Getting Started
+Play in Reddit post expanded view (iframe). Serverless backend syncs per-post state via Redis.
 
-> Make sure you have Node 22 downloaded on your machine before running!
+## Tech Stack
 
-1. Run `npm create devvit@latest --template=phaser`
-2. Go through the installation wizard. You will need to create a Reddit account and connect it to Reddit developers
-3. Copy the command on the success page into your terminal
+- **Frontend**: [Phaser](https://phaser.io/) + [Vite](https://vite.dev/) (scenes: Preloader/MainMenu/Game/GameOver)
+- **Backend**: [Hono](https://hono.dev/) API (serverless Node 22), Redis state, Devvit web
+- **Communication**: Fetch to `/api/message` (tRPC v11 planned)
+- **Types**: TypeScript end-to-end (shared/api.ts contract)
+- **Dev**: ESLint/Prettier/TS strict
 
-## Commands
+See [AGENTS.md](AGENTS.md) for rules, [todo.md](todo.md) for roadmap.
 
-- `npm run dev`: Starts a development server where you can develop your application live on Reddit.
-- `npm run build`: Builds your client and server projects
-- `npm run deploy`: Uploads a new version of your app
-- `npm run launch`: Publishes your app for review
-- `npm run login`: Logs your CLI into Reddit
-- `npm run type-check`: Type checks, lints, and prettifies your app
+## Quick Start
 
-## Credits
+1. **Setup**:
+   ```
+   git clone <repo>
+   cd cozy-clicker
+   npm install
+   npm run login  # Auth Devvit CLI with Reddit app
+   ```
 
-Thanks to the Phaser team for [providing a great template](https://github.com/phaserjs/template-vite-ts)!
-# cozy-clicker
+2. **Local Dev** (frontend hot reload):
+   ```
+   npm run dev
+   ```
+   - Game local sim works (bars/actions/upgrades/decay/popups).
+   - Hono server at localhost:5173/api/message (test with curl).
+
+3. **Type/Lint/Test**:
+   ```
+   npm run type-check
+   npm run lint
+   npm run test  # Isolated files: npm run test -- Game.ts
+   ```
+
+4. **Deploy to Reddit**:
+   ```
+   npm run deploy  # Builds/uploads
+   npm run launch  # Submit for review
+   ```
+   - Post appears in subreddit. Inline splash → expanded game.
+   - Vote post for money bonus (triggers.ts).
+
+## Architecture
+
+```
+Reddit Post (Expanded View)
+   |
+iframe (game.html)
+  - Phaser scenes (Boot/Preloader/MainMenu/Game/GameOver)
+  - Local sim (offline playable)
+  |
+fetch('/api/message') --> Hono (index.ts routes/api.ts)
+  |
+server/core/post.ts (Redis per-post state: decay/actions/upgrades/offline)
+  |
+Redis (Devvit serverless)
+```
+
+## Gameplay
+- **Bars**: Hunger/Energy/Fun (decay/sec). Mood = average.
+- **Actions**: Eat (+hunger -energy -money), Sleep (+energy -hunger), Play (+fun -energy -money), Work (+money -energy -fun).
+- **Upgrades**: Buy once, passive ticks (fridge hunger, job money).
+- **GameOver**: Mood <20.
+- **Sync**: Optimistic local + server roundtrip.
+
+## Roadmap (todo.md)
+- ✅ Core API/state/API/Game local
+- ⏳ Client-server wire (fetch)
+- ⏳ Assets (sprites)
+- ⏳ Vote bonuses, responsive, tRPC
+- 📦 Deploy live
+
+## Deploy Notes
+- [Devvit Docs](https://developers.reddit.com/docs/llms.txt)
+- devvit.json: Entrypoints/menus registered.
+- Custom post type in index.ts.
+
+## Troubleshooting
+- TS errors? `npm run type-check`
+- No postId? Check context.webView in index.ts.
+- Local test API: `curl -X POST http://localhost:5173/api/message -H 'Content-Type: application/json' -d '{"type":"LOAD_STATE"}'`

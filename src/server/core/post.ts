@@ -1,7 +1,4 @@
-import { reddit } from '@devvit/web/server';
+Step 5 — `src/client/game.ts`
+```
 
-export const createPost = async () => {
-  return await reddit.submitCustomPost({
-    title: 'cozy-clicker',
-  });
-};
+Assets next (sprites to public/). What's priority?
