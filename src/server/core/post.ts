@@ -35,7 +35,8 @@ export async function saveState(
   postId: string,
   state: SimState
 ): Promise<void> {
-  await redis.set(STATE_KEY(postId), JSON.stringify(state), { EX: 86400 });
+  await redis.set(STATE_KEY(postId), JSON.stringify(state));
+  await redis.expire(STATE_KEY(postId), 86400);
 }
 
 export async function applyAction(
