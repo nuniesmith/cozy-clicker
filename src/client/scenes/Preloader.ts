@@ -7,7 +7,14 @@ export class Preloader extends Scene {
 
   init() {
     //  We loaded this image in our Boot Scene, so we can display it here
-    this.add.image(512, 384, 'background');
+    // No background image - use config color
+    this.add
+      .text(512, 340, 'Cozy Clicker', {
+        fontSize: '48px',
+        fill: '#ffffff',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
 
     //  A simple progress bar. This is the outline of the bar.
     this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
