@@ -11,7 +11,6 @@ export class Preloader extends Scene {
     this.add
       .text(512, 340, 'Cozy Clicker', {
         fontSize: '48px',
-        fill: '#ffffff',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);

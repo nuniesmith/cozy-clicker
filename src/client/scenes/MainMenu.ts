@@ -59,13 +59,9 @@ export class MainMenu extends Scene {
     const baseFontSize = 38;
     if (!this.title) {
       this.title = this.add
-        .text(0, 0
-          fontFamily: 'Arial Black',
+        .text(0, 0, 'Cozy Clicker', {
           fontSize: `${baseFontSize}px`,
-          color: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 8,
-          align: 'center',
+          fontStyle: 'bold',
         })
         .setOrigin(0.5);
     }
