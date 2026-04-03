@@ -87,3 +87,4 @@ Redis (Devvit serverless)
 - TS errors? `npm run type-check`
 - No postId? Check context.webView in index.ts.
 - Local test API: `curl -X POST http://localhost:5173/api/message -H 'Content-Type: application/json' -d '{"type":"LOAD_STATE"}'`
+# karma-crush
